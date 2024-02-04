@@ -1,0 +1,19 @@
+{
+    "name": "asxcode/log-shipper",
+    "description": "A Laravel package for effortless and customizable transport of logs to external APIs, enhancing centralized log management.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Asxcode\\LogShipper\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Arvind Suthar",
+            "email": "arvindsuthar198@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

@@ -8,6 +8,21 @@
             "Asxcode\\LogShipper\\": "src/"
         }
     },
+    "scripts": {
+        "post-install-cmd": [
+            "php artisan vendor:publish --provider=\"Asxcode\\LogShipper\\LogShipperServiceProvider\" --tag=\"config\" --force"
+        ]
+    },    
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Asxcode\\LogShipper\\LogShipperServiceProvider"
+            ],
+            "aliases": {
+                "LogShipper": "Asxcode\\LogShipper\\Facades\\LogShipper"
+            }
+        }
+    },
     "authors": [
         {
             "name": "Arvind Suthar",

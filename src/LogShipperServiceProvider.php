@@ -31,51 +31,12 @@ class LogShipperServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/log-shipper.php', 'log-shipper'
         );
-
-        // Automatically add the new channel to Laravel's logging configuration
-        $this->addLoggingChannel();
     }
 
     public function register()
     {
         $this->app->bind('log-shipper', function () {
-            return new LogShipperLogger();
+            return new LogShipperLogger('log-shipper', [], []);
         });
-    }
-
-    /**
-     * Add the new logging channel to Laravel's logging configuration.
-     *
-     * @return void
-     */
-    protected function addLoggingChannel()
-    {
-        // Get the existing channels from the Laravel configuration
-        $channels = config('logging.channels', []);
-
-        // Add the new channel if it doesn't exist
-        if (!isset($channels['log-shipper'])) {
-            $channels['log-shipper'] = [
-                'driver' => 'daily',
-                'path' => storage_path('logs/log-shipper.log'),
-                'level' => 'debug',
-                'days' => 14,
-            ];
-        }
-
-        // Update the modified configuration back to Laravel's config
-        config(['logging.channels' => $channels]);
-    }
-
-    protected function getMonologHandler()
-    {
-        $todayDate = now()->format('Y-m-d');
-        $logDirectory = storage_path('logs/log-shipper' . $todayDate);
-
-        if (!file_exists($logDirectory)) {
-            mkdir($logDirectory, 0755, true);
-        }
-
-        return new \Monolog\Handler\StreamHandler($logDirectory . '/ls.log');
     }
 }

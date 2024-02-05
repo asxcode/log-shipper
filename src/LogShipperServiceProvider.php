@@ -66,4 +66,16 @@ class LogShipperServiceProvider extends ServiceProvider
         // Update the modified configuration back to Laravel's config
         config(['logging.channels' => $channels]);
     }
+
+    protected function getMonologHandler()
+    {
+        $todayDate = now()->format('Y-m-d');
+        $logDirectory = storage_path('logs/log-shipper' . $todayDate);
+
+        if (!file_exists($logDirectory)) {
+            mkdir($logDirectory, 0755, true);
+        }
+
+        return new \Monolog\Handler\StreamHandler($logDirectory . '/ls.log');
+    }
 }

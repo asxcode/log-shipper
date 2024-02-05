@@ -1,48 +1,31 @@
 <?php
 namespace Asxcode\LogShipper;
 
-use Illuminate\Support\Facades\Log;
+use Monolog\Logger as MonologLogger;
 
-class LogShipperLogger
+class LogShipperLogger extends MonologLogger
 {
-    protected $logDirectory;
-
-    public function __construct()
+    public function __construct($name, $handlers = [], $processors = [])
     {
-        $this->logDirectory = config('log-shipper.log_directory', storage_path('logs/log-shipper'));
+        // Add custom log handlers for different log types
+        $handlers = [
+            new StreamHandler($this->getLogFilePath('info'), self::INFO),
+            new StreamHandler($this->getLogFilePath('error'), self::ERROR),
+            // Add more handlers for other log types as needed
+        ];
+
+        parent::__construct($name, $handlers, $processors);
     }
 
-    public function info($message, $context = [])
+    protected function getLogFilePath($logType)
     {
-        $this->log('info', $message, $context);
-    }
+        $todayDate = now()->format('Y-m-d');
+        $logDirectory = storage_path("logs/log-shipper/{$logType}/{$todayDate}");
 
-    public function warning($message, $context = [])
-    {
-        $this->log('warning', $message, $context);
-    }
-
-    public function error($message, $context = [])
-    {
-        $this->log('error', $message, $context);
-    }
-
-    protected function log($level, $message, $context = [])
-    {
-        $logDirectory = $this->createLogDirectory();
-        Log::useFiles($logDirectory.'/log-shipper.log');
-        Log::$level($message, $context);
-    }
-
-    protected function createLogDirectory()
-    {
-        $todayDirectory = now()->format('Y-m-d');
-        $logDirectory = $this->logDirectory.'/'.$todayDirectory;
-
-        if (!is_dir($logDirectory)) {
+        if (!file_exists($logDirectory)) {
             mkdir($logDirectory, 0755, true);
         }
 
-        return $logDirectory;
+        return $logDirectory . "/{$logType}.log";
     }
 }

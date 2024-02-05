@@ -3,6 +3,7 @@
 namespace Asxcode\LogShipper;
 
 use Illuminate\Support\ServiceProvider;
+use Asxcode\LogShipper\Commands\LogShipperShipCommand;
 
 class LogShipperServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,12 @@ class LogShipperServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                LogShipperShipCommand::class,
+            ]);
+        }
+
         // Publish configuration file
         $this->publishes([
             __DIR__.'/../config/log-shipper.php' => config_path('log-shipper.php'),
